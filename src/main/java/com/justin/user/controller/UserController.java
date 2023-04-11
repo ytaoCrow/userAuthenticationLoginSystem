@@ -24,4 +24,12 @@ public class UserController {
         boolean result = userServiceImpl.getSmsCode(getSmsCodeReqVo);
         return result;
     }
+    @RequestMapping(value = "loginExit", method = RequestMethod.POST)
+    public Boolean loginExit(@RequestParam("userId") String userId,
+                             @RequestParam("accessToken") String accessToken){
+        LoginExitReqVo loginExitReqVo = LoginExitReqVo.builder().
+                userId(userId).accessToken(accessToken).build();
+        boolean result = userServiceImpl.loginExit(loginExitReqVo);
+        return result;
+    }
 }
