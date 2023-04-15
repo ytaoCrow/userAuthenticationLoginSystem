@@ -1,5 +1,9 @@
 package com.justin.user.service.Impl;
 
+import com.justin.user.controller.dto.request.GetSmsCodeRequest;
+import com.justin.user.controller.dto.request.LoginByMobileRequest;
+import com.justin.user.controller.dto.request.LoginExitRequest;
+import com.justin.user.controller.dto.response.LoginByMobileResponse;
 import com.justin.user.dao.UserInfoDao;
 import com.justin.user.dao.UserSmsCodeDao;
 import com.justin.user.entity.*;
@@ -26,7 +30,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RedisTemplate redisTemplate;
     @Override
-    public boolean getSmsCode(GetSmsCodeReqVo getSmsCodeReqVo) {
+    public boolean getSmsCode(GetSmsCodeRequest getSmsCodeReqVo) {
         //隨機生成6位簡訊驗證碼
         String smsCode = String.valueOf((int) (Math.random() * 100000 +1));
         //真實場景是需要呼叫簡訊平台介面
@@ -40,7 +44,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LoginByMobileResVo loginByMobile(LoginByMobileReqVo loginByMobileReqVo) throws BizException {
+    public LoginByMobileResponse loginByMobile(LoginByMobileRequest loginByMobileReqVo) throws BizException {
         //驗證碼檢核
         UserSmsCode userSmsCode = userSmsCodeDao.selectByMobileNo(loginByMobileReqVo.getMobileNo());
         if(userSmsCode == null){
@@ -68,13 +72,13 @@ public class UserServiceImpl implements UserService {
         //生成使用者階段資訊
         String accessToken = UUID.randomUUID().toString().toUpperCase().replaceAll("-", "");
         redisTemplate.opsForValue().set("accessToken", userInfo, 30, TimeUnit.DAYS);
-        LoginByMobileResVo loginByMobileResVo = LoginByMobileResVo.builder().userId(userInfo.getUserId())
+        LoginByMobileResponse loginByMobileResVo = LoginByMobileResponse.builder().userId(userInfo.getUserId())
                 .accessToken(accessToken).build();
         return loginByMobileResVo;
     }
 
     @Override
-    public boolean loginExit(LoginExitReqVo loginExitReqVo) {
+    public boolean loginExit(LoginExitRequest loginExitReqVo) {
         try {
             redisTemplate.delete(loginExitReqVo.getAccessToken());
             return true;

@@ -1,5 +1,9 @@
 package com.justin.user.controller;
 
+import com.justin.user.controller.dto.request.GetSmsCodeRequest;
+import com.justin.user.controller.dto.request.LoginByMobileRequest;
+import com.justin.user.controller.dto.request.LoginExitRequest;
+import com.justin.user.controller.dto.response.LoginByMobileResponse;
 import com.justin.user.entity.*;
 import com.justin.user.entity.enums.ResultCode;
 import com.justin.user.service.UserService;
@@ -18,7 +22,7 @@ public class UserController {
     @RequestMapping(value = "getSmsCode", method = RequestMethod.POST)
     public Boolean getSmsCode(@RequestParam("reqId") String reqId,
                               @RequestParam("mobileNo") String mobileNo){
-        GetSmsCodeReqVo getSmsCodeReqVo = GetSmsCodeReqVo.builder().
+        GetSmsCodeRequest getSmsCodeReqVo = GetSmsCodeRequest.builder().
                 reqId(reqId).mobileNo(mobileNo).build();
         boolean result = userServiceImpl.getSmsCode(getSmsCodeReqVo);
         return result;
@@ -27,16 +31,16 @@ public class UserController {
     public ApiResponse loginByMobile(@RequestParam("reqId") String reqId,
                                      @RequestParam("mobileNo")String mobileNo,
                                      @RequestParam("smsCode")String smsCode) throws BizException {
-        LoginByMobileReqVo loginByMobileReqVo = LoginByMobileReqVo.builder().reqId(reqId).mobileNo(mobileNo)
+        LoginByMobileRequest loginByMobileReqVo = LoginByMobileRequest.builder().reqId(reqId).mobileNo(mobileNo)
                 .smsCode(smsCode).build();
-        LoginByMobileResVo loginByMobileResVo = userServiceImpl.loginByMobile(loginByMobileReqVo);
+        LoginByMobileResponse loginByMobileResVo = userServiceImpl.loginByMobile(loginByMobileReqVo);
         return ApiResponse.success(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getDesc(), loginByMobileResVo);
     }
     @RequestMapping(value = "loginExit", method = RequestMethod.POST)
     public Boolean loginExit(@RequestParam("userId") String userId,
                              @RequestParam("accessToken") String accessToken){
 
-        LoginExitReqVo loginExitReqVo = LoginExitReqVo.builder().
+        LoginExitRequest loginExitReqVo = LoginExitRequest.builder().
                 userId(userId).accessToken(accessToken).build();
         boolean result = userServiceImpl.loginExit(loginExitReqVo);
         return result;
